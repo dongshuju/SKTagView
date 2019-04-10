@@ -40,7 +40,7 @@
     if (!self.singleLine && self.preferredMaxLayoutWidth > 0) {
         NSInteger lineCount = 0;
         for (UIView *view in subviews) {
-            CGSize size = view.intrinsicContentSize;
+            CGSize size = [self.class intrinsicContentSizeForView:view];
             if (previousView) {
                 CGFloat width = size.width;
                 currentX += itemSpacing;
@@ -63,7 +63,7 @@
         intrinsicHeight += bottomPadding + lineSpacing * (lineCount - 1);
     } else {
         for (UIView *view in subviews) {
-            CGSize size = view.intrinsicContentSize;
+            CGSize size = [self.class intrinsicContentSizeForView:view];
             intrinsicWidth += size.width;
         }
         intrinsicWidth += itemSpacing * (subviews.count - 1) + rightPadding;
@@ -118,7 +118,7 @@
     
     if (!self.singleLine && self.preferredMaxLayoutWidth > 0) {
         for (UIView *view in subviews) {
-            CGSize size = view.intrinsicContentSize;
+            CGSize size = [self.class intrinsicContentSizeForView:view];
             if (previousView) {
                 CGFloat width = size.width;
                 currentX += itemSpacing;
@@ -140,7 +140,7 @@
         }
     } else {
         for (UIView *view in subviews) {
-            CGSize size = view.intrinsicContentSize;
+            CGSize size = [self.class intrinsicContentSizeForView:view];
             view.frame = CGRectMake(currentX, topPadding, size.width, size.height);
             currentX += size.width;
             currentX += itemSpacing;
@@ -226,6 +226,15 @@
     
     self.didSetup = NO;
     [self invalidateIntrinsicContentSize];
+}
+
++ (CGSize)intrinsicContentSizeForView:(UIView *)view {
+    if (view.frame.size.height == 0 && view.frame.size.width == 0) {
+        // 如果size 为（0，0）,获取intrinsicContentSize会crash
+        return CGSizeZero;
+    } else {
+        return view.intrinsicContentSize;
+    }
 }
 
 @end
