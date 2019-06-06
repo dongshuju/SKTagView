@@ -115,7 +115,7 @@
     CGFloat itemSpacing = self.interitemSpacing;
     CGFloat lineSpacing = self.lineSpacing;
     CGFloat currentX = leftPadding;
-    
+        
     if (!self.singleLine && self.preferredMaxLayoutWidth > 0) {
         for (UIView *view in subviews) {
             CGSize size = view.intrinsicContentSize;
@@ -123,16 +123,16 @@
                 CGFloat width = size.width;
                 currentX += itemSpacing;
                 if (currentX + width + rightPadding <= self.preferredMaxLayoutWidth) {
-                    view.frame = CGRectMake(currentX, CGRectGetMinY(previousView.frame), size.width, size.height);
+                    view.frame = [self autoRTLRect:CGRectMake(currentX, CGRectGetMinY(previousView.frame), size.width, size.height)];
                     currentX += size.width;
                 } else {
                     CGFloat width = MIN(size.width, self.preferredMaxLayoutWidth - leftPadding - rightPadding);
-                    view.frame = CGRectMake(leftPadding, CGRectGetMaxY(previousView.frame) + lineSpacing, width, size.height);
+                    view.frame = [self autoRTLRect:CGRectMake(leftPadding, CGRectGetMaxY(previousView.frame) + lineSpacing, width, size.height)];
                     currentX = leftPadding + width;
                 }
             } else {
                 CGFloat width = MIN(size.width, self.preferredMaxLayoutWidth - leftPadding - rightPadding);
-                view.frame = CGRectMake(leftPadding, topPadding, width, size.height);
+                view.frame = [self autoRTLRect:CGRectMake(leftPadding, topPadding, width, size.height)];
                 currentX += width;
             }
             
@@ -141,7 +141,7 @@
     } else {
         for (UIView *view in subviews) {
             CGSize size = view.intrinsicContentSize;
-            view.frame = CGRectMake(currentX, topPadding, size.width, size.height);
+            view.frame = [self autoRTLRect:CGRectMake(currentX, topPadding, size.width, size.height)];
             currentX += size.width;
             currentX += itemSpacing;
 
@@ -150,6 +150,15 @@
     }
     
     self.didSetup = YES;
+}
+
+-(CGRect)autoRTLRect:(CGRect)originRect {
+    CGRect rect = originRect;
+    if (self.textAlignment == NSTextAlignmentRight || (self.semanticContentAttribute == UISemanticContentAttributeForceRightToLeft && self.textAlignment == NSTextAlignmentNatural)) {
+        CGFloat x = self.frame.size.width - originRect.origin.x - originRect.size.width;
+        rect.origin.x = x;
+    }
+    return rect;
 }
 
 #pragma mark - IBActions
