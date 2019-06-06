@@ -17,6 +17,7 @@
 @property (assign, nonatomic) NSTextAlignment textAlignment;
 @property (assign, nonatomic) BOOL singleLine;
 @property (copy, nonatomic, nullable) void (^didTapTagAtIndex)(NSUInteger index);
+@property (strong, nonatomic, nullable) Class buttonClass;
 
 - (void)addTag: (nonnull SKTag *)tag;
 - (void)insertTag: (nonnull SKTag *)tag atIndex:(NSUInteger)index;
